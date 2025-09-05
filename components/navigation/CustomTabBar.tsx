@@ -1,14 +1,21 @@
-import rufusIcon from '@/assets/images/rufus.png';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { PlatformPressable } from '@react-navigation/elements';
 import React, { useEffect, useState } from 'react';
-import { Image, View } from 'react-native';
+import { Image, View, Text } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
+const rufusIcon = require('@/assets/images/rufus.png');
 
 // https://salamina.tech/blog/post/custom-tab-bar-tab-navigation-expo-react-native/
 export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const [tabBarWidth, setTabBarWidth] = useState(0);
-  const tabWidth = tabBarWidth / state.routes.length;
+  
+  // Filtrar rotas que devem ser exibidas no tab bar (excluir notificacoes)
+  const visibleRoutes = state.routes.filter((route) => {
+    return route.name !== 'notificacoes';
+  });
+  
+  const tabWidth = tabBarWidth / visibleRoutes.length;
   const translateX = useSharedValue(state.index * tabWidth);
 
   const indicatorPadding = 20; // px
@@ -30,13 +37,14 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
       {/* Animated Tab Indicator */}
       {tabBarWidth > 0 && (
         <Animated.View
-          className="absolute top-0 left-0 z-10 bg-dark rounded-b-lg h-1"
+          className="absolute top-0 left-0 z-10 bg-secondary rounded-b-lg h-1"
           style={[{ width: indicatorWidth }, indicatorStyle]}
         />
       )}
-      {state.routes.map((route, index) => {
+      {visibleRoutes.map((route, visibleIndex) => {
         const { options } = descriptors[route.key];
-        const isFocused = state.index === index;
+        const originalIndex = state.routes.findIndex(r => r.key === route.key);
+        const isFocused = state.index === originalIndex;
 
         const onPress = () => {
           const event = navigation.emit({
@@ -59,22 +67,34 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
 
         return (
           <PlatformPressable
-            key={index}
+            key={visibleIndex}
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
             onPress={onPress}
             onLongPress={onLongPress}
+            android_ripple={{
+              color: '#A7AFB520', // Cor primária com transparência
+              borderless: true,
+              radius: 40, // Tamanho do ripple
+            }}
             className={`flex-1 items-center justify-center py-2 pb-safe`}>
-            {options.tabBarIcon && route.name !== 'rufus' ? (
-              options.tabBarIcon({
-                focused: isFocused,
-                color: 'black',
-                size: 24,
-              })
-            ) : (
-              <Image source={rufusIcon} style={{ width: 40, height: 40 }} />
-            )}
+            <View className="items-center">
+              {options.tabBarIcon && route.name !== 'rufus' ? (
+                options.tabBarIcon({
+                  focused: isFocused,
+                  color: 'black',
+                  size: 24,
+                })
+              ) : (
+                <Image source={rufusIcon} style={{ width: 40, height: 40 }} />
+              )}
+              {route.name !== 'rufus' && (
+                <Text className="text-xs mt-1 text-gray-600">
+                  {options.title || route.name}
+                </Text>
+              )}
+            </View>
           </PlatformPressable>
         );
       })}

@@ -9,32 +9,38 @@ const Layout = () => {
   const router = useRouter();
   // const { count } = useCartStore();
   return (
-    <StyledTabs headerClassName="bg-dark" tabBar={(props) => <CustomTabBar {...props} />}>
+    <StyledTabs 
+      headerClassName="bg-primary" 
+      tabBar={(props) => <CustomTabBar {...props} />}
+    >
       <Tabs.Screen
         name="(index)"
         options={{
+          title: "Início",
           headerShown: false,
-          title: '',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" color={color} size={size} />
           ),
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="favoritos"
         options={{
+          title: "Favoritos",
+          header: () => <SearchBar />,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" color={color} size={size} />
+            <Ionicons name="heart-outline" color={color} size={size} />
           ),
         }}
       />
       <Tabs.Screen
-        name="cart"
+        name="atendimento"
         options={{
+          title: "Atendimento",
           header: () => <SearchBar />,
           tabBarIcon: ({ color, size }) => (
             <View className="relative">
-              <Ionicons name="cart-outline" color={color} size={size} />
+              <Ionicons name="chatbubbles-outline" color={color} size={size} />
               <View className="absolute -top-2 h-4 w-4 -right-4">
                 {/* <Text className="text-md font-bold">{count}</Text> */}
               </View>
@@ -43,10 +49,12 @@ const Layout = () => {
         }}
       />
       <Tabs.Screen
-        name="more"
+        name="profile"
         options={{
+          title: "Perfil",
+          header: () => <SearchBar />,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="menu-outline" color={color} size={size} />
+            <Ionicons name="person-outline" color={color} size={size} />
           ),
         }}
       />
@@ -58,6 +66,13 @@ const Layout = () => {
             router.push('/(modal)/rufus');
           },
         })}
+      />
+      <Tabs.Screen
+        name="notificacoes"
+        options={{
+          headerShown: false,
+          href: null, // Oculta do tab bar mas mantém a rota acessível
+        }}
       />
     </StyledTabs>
   );

@@ -3,7 +3,8 @@ import SearchBar from "@/components/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native";
-const Laoyut = () => {
+
+const Layout = () => {
   const router = useRouter();
   return (
     <StyledStack
@@ -11,6 +12,7 @@ const Laoyut = () => {
       headerClassName="bg-dark text-white"
       screenOptions={{
         header: () => <SearchBar />,
+        
       }}
     >
       <Stack.Screen
@@ -33,4 +35,4 @@ const Laoyut = () => {
     </StyledStack>
   );
 };
-export default Laoyut;
+export default Layout;
